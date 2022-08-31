@@ -3,8 +3,6 @@ const GlobalFilter = require("../utils/GlobalFilter");
 
 exports.getAllTours = async (req, res) => {
   //!MongoDb object
-  // let tours = Tour.find();
-
   const tours = new GlobalFilter(Tour.find(), req.query);
   tours.filter().sort().fields().paginate();
 
@@ -28,11 +26,12 @@ exports.getAllTours = async (req, res) => {
   }
 };
 
-exports.getOneTour = (req, res, next) => {
+exports.getOneTour = async (req, res) => {
   try {
     const id = req.params.id;
-
-    const tour = tours.find((t) => t.id == id);
+    const tour = await Tour.find({
+      _id: id
+    })
 
     if (!tour) return res.send({
       success: false,
@@ -53,7 +52,7 @@ exports.getOneTour = (req, res, next) => {
   }
 };
 
-exports.createTour = async (req, res, next) => {
+exports.createTour = async (req, res) => {
   try {
     const newTour = await Tour.create(req.body);
 
