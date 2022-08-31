@@ -6,8 +6,6 @@ exports.getAllTours = async (req, res) => {
   const tours = new GlobalFilter(Tour.find(), req.query);
   tours.filter().sort().fields().paginate();
 
-
-
   try {
     const allData = await tours.query;
 
