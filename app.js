@@ -14,14 +14,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV.trim() === "development") {
   app.use(morgan("dev"));
 }
-
-// app.use((req, res, next) => {
-//   console.log("Node.js'e salam deyersen");
-//   next();
-// });
 
 app.use("/tour", tourRouter);
 

@@ -15,8 +15,6 @@ class GlobalFilter {
       /\b(gt|gte|lt|lte)\b/g,
       (atomic) => `$${atomic}`
     );
-    //{ price: { gt: '200', lt: '1000', } }
-    //{ price: {$gt: '200', $lt: '1000' } }
 
     this.query.find(JSON.parse(tempoQueryStr));
 
@@ -46,7 +44,7 @@ class GlobalFilter {
 
   paginate() {
     const page = parseInt(this.queryStr.page) || 1;
-    const limit = parseInt(this.queryStr.limit) || 5;
+    const limit = parseInt(this.queryStr.limit) || 10;
     const skip = (page - 1) * limit;
     this.query.skip(skip).limit(limit);
 

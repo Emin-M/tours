@@ -1,6 +1,7 @@
 const Tour = require("../model/tour");
 const GlobalFilter = require("../utils/GlobalFilter");
 
+//! Getting All Tours
 exports.getAllTours = async (req, res) => {
   //!MongoDb object
   const tours = new GlobalFilter(Tour.find(), req.query);
@@ -24,12 +25,17 @@ exports.getAllTours = async (req, res) => {
   }
 };
 
+//! Getting Tour With "_id"
 exports.getOneTour = async (req, res) => {
   try {
     const id = req.params.id;
-    const tour = await Tour.find({
-      _id: id
-    })
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid ID"
+      });
+    };
+    const tour = await Tour.findById(id)
 
     if (!tour) return res.send({
       success: false,
@@ -50,6 +56,7 @@ exports.getOneTour = async (req, res) => {
   }
 };
 
+//! Posting Tour
 exports.createTour = async (req, res) => {
   try {
     const newTour = await Tour.create(req.body);
@@ -60,6 +67,76 @@ exports.createTour = async (req, res) => {
         newTour,
       },
     });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
+//! Updating Tour With "_id"
+exports.updateTour = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    //! checking if "id" is valid
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid ID"
+      });
+    };
+
+    //! updating product
+    const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
+      new: true
+    });
+    if (!updatedTour) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid ID"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: updatedTour
+    })
+
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
+//! Deleting Tour
+exports.deleteTour = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    //! checking if "id" is valid
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid ID"
+      });
+    };
+
+    //! updating product
+    const deletedTour = await Tour.findByIdAndRemove(id);
+    if (!deletedTour) return res.status(404).json({
+      success: false,
+      message: "Invalid ID"
+    });
+
+    res.json({
+      success: true,
+      message: `tour with name: '${deletedTour.name}' deleted`
+    });
+
   } catch (error) {
     res.json({
       success: false,
