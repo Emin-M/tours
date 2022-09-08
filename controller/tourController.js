@@ -123,6 +123,7 @@ exports.deleteTour = async (req, res) => {
   }
 };
 
+//! Getting Statistic
 exports.getStatictic = async (req, res) => {
   const aggregateData = await Tour.aggregate([{
       $group: {
@@ -152,4 +153,55 @@ exports.getStatictic = async (req, res) => {
     success: true,
     data: aggregateData
   });
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  const year = req.params.year;
+
+  const aggregateData = await Tour.aggregate([{
+      $unwind: "$startDates",
+    },
+    {
+      $match: {
+        startDates: {
+          $gte: new Date(`${year}-01-01`),
+          $lte: new Date(`${year}-12-31`),
+        },
+      }
+    },
+    {
+      $group: {
+        _id: {
+          $month: "$startDates",
+        },
+        sum: {
+          $sum: 1
+        },
+        tours: {
+          $push: "$name"
+        },
+        people: {
+          $sum: "$maxGroupSize"
+        }
+      }
+    }, {
+      $addFields: {
+        month: "$_id"
+      }
+    }, {
+      $project: {
+        _id: 0
+      }
+    }, {
+      $sort: {
+        sum: -1,
+      },
+    },
+  ]);
+
+  res.json({
+    success: true,
+    length: aggregateData.length,
+    data: aggregateData
+  })
 };

@@ -16,7 +16,7 @@ app.use(express.json());
 
 if (process.env.NODE_ENV.trim() === "development") {
   app.use(morgan("dev"));
-}
+};
 
 app.use("/tour", tourRouter);
 
