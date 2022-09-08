@@ -29,12 +29,6 @@ exports.getAllTours = async (req, res) => {
 exports.getOneTour = async (req, res) => {
   try {
     const id = req.params.id;
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid ID"
-      });
-    };
     const tour = await Tour.findById(id)
 
     if (!tour) return res.send({
@@ -80,14 +74,6 @@ exports.updateTour = async (req, res) => {
   try {
     const id = req.params.id;
 
-    //! checking if "id" is valid
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid ID"
-      });
-    };
-
     //! updating product
     const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
       new: true
@@ -117,14 +103,6 @@ exports.deleteTour = async (req, res) => {
   try {
     const id = req.params.id;
 
-    //! checking if "id" is valid
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid ID"
-      });
-    };
-
     //! updating product
     const deletedTour = await Tour.findByIdAndRemove(id);
     if (!deletedTour) return res.status(404).json({
@@ -143,4 +121,35 @@ exports.deleteTour = async (req, res) => {
       message: error,
     });
   }
+};
+
+exports.getStatictic = async (req, res) => {
+  const aggregateData = await Tour.aggregate([{
+      $group: {
+        _id: "$difficulty",
+        tourSum: {
+          $sum: 1
+        },
+        maxPrice: {
+          $max: "$price"
+        },
+        minPrice: {
+          $min: "$price"
+        },
+        averageRating: {
+          $avg: "$ratingsAverage"
+        }
+      }
+    },
+    {
+      $sort: {
+        tourSum: -1
+      }
+    }
+  ]);
+
+  res.json({
+    success: true,
+    data: aggregateData
+  });
 };
