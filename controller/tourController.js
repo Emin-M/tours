@@ -1,130 +1,97 @@
 const Tour = require("../model/tour");
 const GlobalFilter = require("../utils/GlobalFilter");
+const {
+  asyncCatch
+} = require("../utils/asyncCatch");
 
 //! Getting All Tours
-exports.getAllTours = async (req, res) => {
+exports.getAllTours = asyncCatch(async (req, res) => {
   //!MongoDb object
   const tours = new GlobalFilter(Tour.find(), req.query);
   tours.filter().sort().fields().paginate();
 
-  try {
-    const allData = await tours.query;
+  const allData = await tours.query;
 
-    res.json({
-      success: true,
-      length: allData.length,
-      data: {
-        tours: allData,
-      },
-    });
-  } catch (error) {
-    res.json({
-      success: false,
-      message: error,
-    });
-  }
-};
+  res.json({
+    success: true,
+    length: allData.length,
+    data: {
+      tours: allData,
+    },
+  });
+});
 
 //! Getting Tour With "_id"
-exports.getOneTour = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const tour = await Tour.findById(id)
+exports.getOneTour = asyncCatch(async (req, res) => {
+  const id = req.params.id;
+  const tour = await Tour.findById(id)
 
-    if (!tour) return res.send({
-      success: false,
-      message: "Invalid ID"
-    });
+  if (!tour) return res.send({
+    success: false,
+    message: "Invalid ID"
+  });
 
-    res.json({
-      success: true,
-      data: {
-        tour
-      }
-    });
-  } catch (error) {
-    res.json({
-      success: false,
-      message: error,
-    });
-  }
-};
+  res.json({
+    success: true,
+    data: {
+      tour
+    }
+  });
+});
 
 //! Posting Tour
-exports.createTour = async (req, res) => {
-  try {
-    const newTour = await Tour.create(req.body);
+exports.createTour = asyncCatch(async (req, res) => {
+  const newTour = await Tour.create(req.body);
 
-    res.json({
-      success: true,
-      data: {
-        newTour,
-      },
-    });
-  } catch (error) {
-    res.json({
-      success: false,
-      message: error,
-    });
-  }
-};
+  res.json({
+    success: true,
+    data: {
+      newTour,
+    },
+  });
+});
 
 //! Updating Tour With "_id"
-exports.updateTour = async (req, res) => {
-  try {
-    const id = req.params.id;
+exports.updateTour = asyncCatch(async (req, res) => {
+  const id = req.params.id;
 
-    //! updating product
-    const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
-      new: true
-    });
-    if (!updatedTour) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid ID"
-      });
-    }
+  //! updating product
+  const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
+    new: true
+  });
 
-    res.json({
-      success: true,
-      data: updatedTour
-    })
-
-  } catch (error) {
-    res.json({
-      success: false,
-      message: error,
-    });
-  }
-};
-
-//! Deleting Tour
-exports.deleteTour = async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    //! updating product
-    const deletedTour = await Tour.findByIdAndRemove(id);
-    if (!deletedTour) return res.status(404).json({
+  if (!updatedTour) {
+    return res.status(404).json({
       success: false,
       message: "Invalid ID"
     });
+  };
 
-    res.json({
-      success: true,
-      message: `tour with name: '${deletedTour.name}' deleted`
-    });
+  res.json({
+    success: true,
+    data: updatedTour
+  });
+});
 
-  } catch (error) {
-    res.json({
-      success: false,
-      message: error,
-    });
-  }
-};
+//! Deleting Tour
+exports.deleteTour = asyncCatch(async (req, res) => {
+  const id = req.params.id;
+
+  //! updating product
+  const deletedTour = await Tour.findByIdAndRemove(id);
+  if (!deletedTour) return res.status(404).json({
+    success: false,
+    message: "Invalid ID"
+  });
+
+  res.json({
+    success: true,
+    message: `tour with name: '${deletedTour.name}' deleted`
+  });
+});
 
 //! Getting Statistic
-exports.getStatictic = async (req, res) => {
+exports.getStatictic = asyncCatch(async (req, res) => {
   const aggregateData = await Tour.aggregate([{
       $group: {
         _id: "$difficulty",
@@ -153,10 +120,10 @@ exports.getStatictic = async (req, res) => {
     success: true,
     data: aggregateData
   });
-};
+});
 
 //! Getting Monthly Plan
-exports.getMonthlyPlan = async (req, res) => {
+exports.getMonthlyPlan = asyncCatch(async (req, res) => {
   const year = req.params.year;
 
   const aggregateData = await Tour.aggregate([{
@@ -205,4 +172,4 @@ exports.getMonthlyPlan = async (req, res) => {
     length: aggregateData.length,
     data: aggregateData
   })
-};
+});
