@@ -3,6 +3,7 @@ const GlobalFilter = require("../utils/GlobalFilter");
 const {
   asyncCatch
 } = require("../utils/asyncCatch");
+const GlobalError = require("../error/GlobalError");
 
 //! Getting All Tours
 exports.getAllTours = asyncCatch(async (req, res) => {
@@ -22,14 +23,11 @@ exports.getAllTours = asyncCatch(async (req, res) => {
 });
 
 //! Getting Tour With "_id"
-exports.getOneTour = asyncCatch(async (req, res) => {
+exports.getOneTour = asyncCatch(async (req, res, next) => {
   const id = req.params.id;
   const tour = await Tour.findById(id)
 
-  if (!tour) return res.send({
-    success: false,
-    message: "Invalid ID"
-  });
+  if (!tour) return next(new GlobalError("Invalid ID", 404));
 
   res.json({
     success: true,
@@ -60,12 +58,7 @@ exports.updateTour = asyncCatch(async (req, res) => {
     new: true
   });
 
-  if (!updatedTour) {
-    return res.status(404).json({
-      success: false,
-      message: "Invalid ID"
-    });
-  };
+  if (!updatedTour) return next(new GlobalError("Invalid ID", 404));
 
   res.json({
     success: true,
@@ -79,10 +72,7 @@ exports.deleteTour = asyncCatch(async (req, res) => {
 
   //! updating product
   const deletedTour = await Tour.findByIdAndRemove(id);
-  if (!deletedTour) return res.status(404).json({
-    success: false,
-    message: "Invalid ID"
-  });
+  if (!deletedTour) return next(new GlobalError("Invalid ID", 404));
 
   res.json({
     success: true,

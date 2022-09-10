@@ -1,10 +1,7 @@
 const asyncCatch = (callback) => {
-    return (req, res) => {
-        callback(req, res).catch((err) => res.json({
-            success: false,
-            message: err.message
-        }));
-    }
+    return (req, res, next) => {
+        callback(req, res, next).catch((err) => next(err));
+    };
 };
 
 module.exports = {
