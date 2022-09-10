@@ -18,7 +18,7 @@ if (process.env.NODE_ENV.trim() === "development") {
   app.use(morgan("dev"));
 };
 
-app.use("/tour", tourRouter);
+app.use("/api/v1/tour", tourRouter);
 
 app.use((req, res) => {
   res.json({
