@@ -6,7 +6,7 @@ const {
 const GlobalError = require("../error/GlobalError");
 
 //! Getting All Tours
-exports.getAllTours = asyncCatch(async (req, res) => {
+exports.getAllTours = asyncCatch(async (req, res, next) => {
   //!MongoDb object
   const tours = new GlobalFilter(Tour.find(), req.query);
   tours.filter().sort().fields().paginate();
@@ -38,7 +38,7 @@ exports.getOneTour = asyncCatch(async (req, res, next) => {
 });
 
 //! Posting Tour
-exports.createTour = asyncCatch(async (req, res) => {
+exports.createTour = asyncCatch(async (req, res, next) => {
   const newTour = await Tour.create(req.body);
 
   res.json({
@@ -50,7 +50,7 @@ exports.createTour = asyncCatch(async (req, res) => {
 });
 
 //! Updating Tour With "_id"
-exports.updateTour = asyncCatch(async (req, res) => {
+exports.updateTour = asyncCatch(async (req, res, next) => {
   const id = req.params.id;
 
   //! updating product
@@ -67,7 +67,7 @@ exports.updateTour = asyncCatch(async (req, res) => {
 });
 
 //! Deleting Tour
-exports.deleteTour = asyncCatch(async (req, res) => {
+exports.deleteTour = asyncCatch(async (req, res, next) => {
   const id = req.params.id;
 
   //! updating product
@@ -81,7 +81,7 @@ exports.deleteTour = asyncCatch(async (req, res) => {
 });
 
 //! Getting Statistic
-exports.getStatictic = asyncCatch(async (req, res) => {
+exports.getStatictic = asyncCatch(async (req, res, next) => {
   const aggregateData = await Tour.aggregate([{
       $group: {
         _id: "$difficulty",
@@ -113,7 +113,7 @@ exports.getStatictic = asyncCatch(async (req, res) => {
 });
 
 //! Getting Monthly Plan
-exports.getMonthlyPlan = asyncCatch(async (req, res) => {
+exports.getMonthlyPlan = asyncCatch(async (req, res, next) => {
   const year = req.params.year;
 
   const aggregateData = await Tour.aggregate([{
