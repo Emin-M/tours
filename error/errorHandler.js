@@ -1,5 +1,6 @@
 const GlobalError = require("./GlobalError");
 
+//! sending errors for production
 const sendProductionError = (err, res, statusCode) => {
     if (err.operational) {
         res.status(statusCode).json({
@@ -14,6 +15,7 @@ const sendProductionError = (err, res, statusCode) => {
     };
 };
 
+//! handling errors by their name
 const handleValidationError = (err) => {
     const errors = Object.values(err.errors).map(err => err.message);
     const finalErr = errors.join(",");
