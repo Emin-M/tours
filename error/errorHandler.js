@@ -25,7 +25,15 @@ const handleValidationError = (err) => {
 
 const handleCastError = (err) => {
     return new GlobalError("Provide a valid Object ID!");
-}
+};
+
+const handleJWTError = (err) => {
+    return new GlobalError("Token is not valid!", 403);
+};
+
+const handleJWTEXPIRE = (err) => {
+    return new GlobalError("Token expired! Please log in again", 403);
+};
 
 
 module.exports = (err, req, res, next) => {
@@ -42,6 +50,8 @@ module.exports = (err, req, res, next) => {
     } else if (process.env.NODE_ENV.trim() === "production") {
         if (err.name === "ValidationError") err = handleValidationError(err);
         if (err.name === "CastError") err = handleCastError(err);
+        if (err.name === "JsonWebTokenError") err = handleJWTError(err);
+        if (err.name === "TokenExpiredError") err = handleJWTEXPIRE(err);
 
         sendProductionError(err, res, statusCode);
     };
