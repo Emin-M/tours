@@ -10,6 +10,7 @@ const errorHandler = require("./error/errorHandler");
 
 //!Routers:
 const tourRouter = require("./routes/tourRouter");
+const userRouter = require("./routes/userRouter");
 
 const app = express();
 
@@ -23,6 +24,7 @@ if (process.env.NODE_ENV.trim() === "development") {
 
 //! routers
 app.use("/api/v1/tour", tourRouter);
+app.use("/api/v1/user", userRouter);
 
 //! throwing error when route does not exist
 app.use((req, res, next) => {
