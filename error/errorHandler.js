@@ -27,6 +27,12 @@ const handleCastError = (err) => {
     return new GlobalError("Provide a valid Object ID!");
 };
 
+const handleMongoServerError = (err) => {
+    if (err.code === 11000) {
+        return new GlobalError(`The ${Object.keys(err.keyValue)} with value: '${Object.values(err.keyValue)}' already exist!`);
+    }
+};
+
 const handleJWTError = (err) => {
     return new GlobalError("Token is not valid!", 403);
 };
@@ -50,6 +56,7 @@ module.exports = (err, req, res, next) => {
     } else if (process.env.NODE_ENV.trim() === "production") {
         if (err.name === "ValidationError") err = handleValidationError(err);
         if (err.name === "CastError") err = handleCastError(err);
+        if (err.name === "MongoServerError") err = handleMongoServerError(err);
         if (err.name === "JsonWebTokenError") err = handleJWTError(err);
         if (err.name === "TokenExpiredError") err = handleJWTEXPIRE(err);
 

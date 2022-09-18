@@ -6,6 +6,7 @@ const {
 const {
     asyncCatch
 } = require("../utils/asyncCatch");
+const User = require("../model/user");
 
 const protectAuth = asyncCatch(async (req, res, next) => {
     let token;
@@ -21,6 +22,14 @@ const protectAuth = asyncCatch(async (req, res, next) => {
     const promiseVerify = promisify(jwt.verify);
 
     const decodedData = await promiseVerify(token, process.env.JWT_SECRET);
+
+    //! checking if User with this token exist
+    const user = User.findOne(decodedData.id);
+
+    if (!user) return next(new GlobalError("The user with this token does not exist!"));
+
+    //! sending user for next middleware
+    req.user = user;
 
     next();
 
