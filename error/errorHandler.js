@@ -30,7 +30,7 @@ const handleCastError = (err) => {
 const handleMongoServerError = (err) => {
     if (err.code === 11000) {
         return new GlobalError(`The ${Object.keys(err.keyValue)} with value: '${Object.values(err.keyValue)}' already exist!`);
-    }
+    };
 };
 
 const handleJWTError = (err) => {
