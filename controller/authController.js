@@ -4,6 +4,7 @@ const {
 } = require("../utils/asyncCatch");
 const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/email");
 
 //! Creating JWT Token For User
 const signJWT = (id) => {
@@ -59,5 +60,38 @@ exports.login = asyncCatch(async (req, res, next) => {
     res.json({
         success: true,
         token
+    });
+});
+
+exports.forgetPassword = asyncCatch(async (req, res, next) => {
+    const {
+        email
+    } = req.body;
+
+    //! checking if user exist with given email
+    const user = await User.findOne({
+        email
+    });
+
+    if (!user) return next(new GlobalError("User with this email does not exist!", 404));
+
+    //! creating resetToken and adding to the user data
+    const resetToken = await user.hashResetPassword();
+    await user.save({
+        validateBeforeSave: false
+    });
+
+    const urlString = `${req.protocol}://${req.get("host")}/${resetToken}`;
+
+    //! sending email
+    await sendEmail({
+        email: user.email,
+        subject: "Change password!",
+        message: `Please follow the link: ${urlString}`,
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Email sent!",
     });
 });
