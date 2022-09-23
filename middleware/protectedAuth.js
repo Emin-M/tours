@@ -16,7 +16,7 @@ const protectAuth = asyncCatch(async (req, res, next) => {
         token = req.headers.authorization.split(" ")[1];
     };
 
-    if (!token) return next(new GlobalError("Token is not defined!", 400));
+    if (!token) return next(new GlobalError("Please Authenticate!", 400));
 
     //! check if token is valid
     const promiseVerify = promisify(jwt.verify);
