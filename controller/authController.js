@@ -5,6 +5,7 @@ const {
 const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 
 //! Creating JWT Token For User
 const signJWT = (id) => {
@@ -93,5 +94,44 @@ exports.forgetPassword = asyncCatch(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "Email sent!",
+    });
+});
+
+exports.resetPassword = asyncCatch(async (req, res, next) => {
+    const token = req.params.token;
+    const {
+        password,
+        confirmPassword
+    } = req.body;
+
+    //! hassing token for checking
+    const hashedToken = crypto
+        .createHash("md5")
+        .update(token)
+        .digest("hex");
+
+    const user = await User.findOne({
+        resetToken: hashedToken,
+        resetTime: {
+            $gt: new Date()
+        },
+    });
+
+    //! checking if user exist and token is match
+    if (!user) return next(new GlobalError("Token wrong or expired!"));
+
+    //! updating user
+    user.password = password;
+    user.confirmPassword = confirmPassword;
+    user.resetToken = undefined;
+    user.resetTime = undefined;
+    await user.save();
+
+    //! creating new Token for singIn
+    const newToken = signJWT(user._id);
+
+    res.json({
+        success: true,
+        token: newToken
     });
 });
