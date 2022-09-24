@@ -1,3 +1,4 @@
+const User = require("../model/user");
 const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
 const {
@@ -6,9 +7,8 @@ const {
 const {
     asyncCatch
 } = require("../utils/asyncCatch");
-const User = require("../model/user");
 
-const protectAuth = asyncCatch(async (req, res, next) => {
+const protectedAuth = asyncCatch(async (req, res, next) => {
     let token;
 
     //! check if token provided
@@ -24,7 +24,8 @@ const protectAuth = asyncCatch(async (req, res, next) => {
     const decodedData = await promiseVerify(token, process.env.JWT_SECRET);
 
     //! checking if User with this token exist
-    const user = User.findOne(decodedData.id);
+    console.log(decodedData.id);
+    const user = await User.findById(decodedData.id);
 
     if (!user) return next(new GlobalError("The user with this token does not exist!"));
 
@@ -40,4 +41,4 @@ const protectAuth = asyncCatch(async (req, res, next) => {
     // });
 });
 
-module.exports = protectAuth;
+module.exports = protectedAuth;

@@ -51,7 +51,7 @@ exports.login = asyncCatch(async (req, res, next) => {
     });
 
     //! 3) is password correct?
-    const pw = user.checkPassword(password);
+    const pw = await user.checkPassword(password);
 
     if (!user || !pw) return next(new GlobalError("Please check email and password", 403));
 
@@ -64,6 +64,7 @@ exports.login = asyncCatch(async (req, res, next) => {
     });
 });
 
+//! Sending Email When Forget Password
 exports.forgetPassword = asyncCatch(async (req, res, next) => {
     const {
         email
@@ -97,6 +98,7 @@ exports.forgetPassword = asyncCatch(async (req, res, next) => {
     });
 });
 
+//! Changing Password Based On Email That Have Been Sent
 exports.resetPassword = asyncCatch(async (req, res, next) => {
     const token = req.params.token;
     const {
