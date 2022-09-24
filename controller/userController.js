@@ -45,3 +45,19 @@ exports.changePassword = asyncCatch(async (req, res, next) => {
         token
     });
 });
+
+//! Changing Password When User Signed In
+exports.updateUser = asyncCatch(async (req, res, next) => {
+    const user = await User.findByIdAndUpdate(req.user.id, {
+        name: req.body.name,
+        email: req.body.email
+    }, {
+        new: true
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "User updated",
+        user
+    });
+});
