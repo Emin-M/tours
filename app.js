@@ -7,6 +7,7 @@ require("dotenv").config({
 });
 const GlobalError = require("./error/GlobalError");
 const errorHandler = require("./error/errorHandler");
+const helmet = require("helmet");
 
 //!Routers:
 const tourRouter = require("./routes/tourRouter");
@@ -14,6 +15,7 @@ const userRouter = require("./routes/userRouter");
 
 const app = express();
 
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
