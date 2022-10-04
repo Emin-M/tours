@@ -13,6 +13,7 @@ const rateLimit = require("express-rate-limit");
 //!Routers:
 const tourRouter = require("./routes/tourRouter");
 const userRouter = require("./routes/userRouter");
+const reviewRouter = require("./routes/reviewRouter");
 
 const app = express();
 
@@ -38,6 +39,7 @@ if (process.env.NODE_ENV.trim() === "development") {
 //! routers
 app.use("/api/v1/tour", tourRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/review", reviewRouter);
 
 //! throwing error when route does not exist
 app.use((req, res, next) => {
