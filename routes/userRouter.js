@@ -5,11 +5,12 @@ const protectedAuth = require("../middleware/protectedAuth");
 
 router.post("/signup", authContoller.signup);
 router.post("/login", authContoller.login);
-
 router.post("/forgetPassword", authContoller.forgetPassword);
 router.patch("/resetPassword/:token", authContoller.resetPassword);
 
-router.patch("/changePassword", protectedAuth, userController.changePassword);
-router.patch("/", protectedAuth, userController.updateUser);
+//! protected routes
+router.use(protectedAuth);
+router.patch("/changePassword", userController.changePassword);
+router.patch("/", userController.updateUser);
 
 module.exports = router;

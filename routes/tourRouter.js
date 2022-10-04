@@ -12,12 +12,15 @@ router.use("/:tourId/review", reviewRouter);
 router.get("/", tourController.getAllTours);
 router.get("/top-5", top5Middleware, tourController.getAllTours);
 router.get("/statistic", protectedAuth, tourController.getStatictic);
-router.get("/monthly-plan/:year", tourController.getMonthlyPlan);
+router.get("/monthly-plan/:year", protectedAuth, roleAccess("guide", "lead-guide"), tourController.getMonthlyPlan);
 router.get("/:id", tourController.getOneTour);
 
-//! requests
-router.post("/", protectedAuth, tourController.createTour);
-router.patch("/:id", protectedAuth, roleAccess("admin", "guide"), tourController.updateTour);
-router.delete("/:id", protectedAuth, roleAccess("admin"), tourController.deleteTour);
+//! protected routes
+router.use(protectedAuth);
+router.use(roleAccess("admin"));
+
+router.post("/", tourController.createTour);
+router.patch("/:id", tourController.updateTour);
+router.delete("/:id", tourController.deleteTour);
 
 module.exports = router;
