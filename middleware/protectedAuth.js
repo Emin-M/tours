@@ -24,7 +24,6 @@ const protectedAuth = asyncCatch(async (req, res, next) => {
     const decodedData = await promiseVerify(token, process.env.JWT_SECRET);
 
     //! checking if User with this token exist
-    console.log(decodedData.id);
     const user = await User.findById(decodedData.id);
 
     if (!user) return next(new GlobalError("The user with this token does not exist!"));

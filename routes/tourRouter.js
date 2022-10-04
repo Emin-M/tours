@@ -3,6 +3,10 @@ const tourController = require("../controller/tourController");
 const top5Middleware = require("../middleware/top5");
 const protectedAuth = require("../middleware/protectedAuth");
 const roleAccess = require("../middleware/roleAccess");
+const reviewRouter = require("./reviewRouter");
+
+//! merged routes
+router.use("/:tourId/review", reviewRouter);
 
 //! get requests
 router.get("/", tourController.getAllTours);
