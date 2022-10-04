@@ -24,8 +24,13 @@ const reviewSchema = mongoose.Schema({
     }
 });
 
-
-
+reviewSchema.pre(/find/, function (next) {
+    this.populate({
+        path: "creator",
+        select: "-password",
+    });
+    next();
+});
 
 const Review = mongoose.model("review", reviewSchema);
 
