@@ -4,6 +4,9 @@ const {
   asyncCatch
 } = require("../utils/asyncCatch");
 const GlobalError = require("../error/GlobalError");
+const {
+  deleteOne
+} = require("../utils/factory");
 
 //! Getting All Tours
 exports.getAllTours = asyncCatch(async (req, res, next) => {
@@ -70,18 +73,7 @@ exports.updateTour = asyncCatch(async (req, res, next) => {
 });
 
 //! Deleting Tour
-exports.deleteTour = asyncCatch(async (req, res, next) => {
-  const id = req.params.id;
-
-  //! deleting tour
-  const deletedTour = await Tour.findByIdAndRemove(id);
-  if (!deletedTour) return next(new GlobalError("Invalid ID", 404));
-
-  res.json({
-    success: true,
-    message: `tour with name: '${deletedTour.name}' deleted`
-  });
-});
+exports.deleteTour = deleteOne(Tour);
 
 //! Getting Statistic
 exports.getStatictic = asyncCatch(async (req, res, next) => {
