@@ -116,6 +116,14 @@ tourSchema.pre("save", function (next) {
   next();
 });
 
+tourSchema.pre(/find/, function (next) {
+  this.populate({
+    path: "guides",
+    select: "-password"
+  })
+  next();
+});
+
 // tourSchema.post("save", function (document, next) {
 //   this.slug = slugify(this.name, "-");
 //   next();

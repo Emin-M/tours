@@ -20,6 +20,28 @@ const deleteOne = (Model) => asyncCatch(async (req, res, next) => {
     });
 });
 
+//! factory function for getting one document
+const getOne = (Model) => asyncCatch(async (req, res, next) => {
+    const id = req.params.id;
+    const document = await Model.findById(id);
+
+    if (!document) return next(new GlobalError("Invalid ID", 404));
+
+    res.json({
+        success: true,
+        data: {
+            document
+        }
+    });
+});
+
+const getMe = (req, res, next) => {
+    req.params.id = req.user._id;
+    next();
+};
+
 module.exports = {
-    deleteOne
+    deleteOne,
+    getOne,
+    getMe
 };

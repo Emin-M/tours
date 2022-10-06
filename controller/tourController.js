@@ -5,7 +5,8 @@ const {
 } = require("../utils/asyncCatch");
 const GlobalError = require("../error/GlobalError");
 const {
-  deleteOne
+  deleteOne,
+  getOne
 } = require("../utils/factory");
 
 //! Getting All Tours
@@ -26,22 +27,24 @@ exports.getAllTours = asyncCatch(async (req, res, next) => {
 });
 
 //! Getting Tour With "_id"
-exports.getOneTour = asyncCatch(async (req, res, next) => {
-  const id = req.params.id;
-  const tour = await Tour.findById(id).populate({
-    path: "guides",
-    select: "-password"
-  });
+exports.getOneTour = getOne(Tour);
 
-  if (!tour) return next(new GlobalError("Invalid ID", 404));
+// asyncCatch(async (req, res, next) => {
+//   const id = req.params.id;
+//   const tour = await Tour.findById(id).populate({
+//     path: "guides",
+//     select: "-password"
+//   });
 
-  res.json({
-    success: true,
-    data: {
-      tour
-    }
-  });
-});
+//   if (!tour) return next(new GlobalError("Invalid ID", 404));
+
+//   res.json({
+//     success: true,
+//     data: {
+//       tour
+//     }
+//   });
+// });
 
 //! Posting Tour
 exports.createTour = asyncCatch(async (req, res, next) => {

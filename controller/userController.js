@@ -4,7 +4,9 @@ const {
 } = require("../utils/asyncCatch");
 const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
+const {
+    getOne
+} = require("../utils/factory");
 
 //! Creating JWT Token For User
 const signJWT = (id) => {
@@ -61,3 +63,5 @@ exports.updateUser = asyncCatch(async (req, res, next) => {
         user
     });
 });
+
+exports.getUser = getOne(User);
