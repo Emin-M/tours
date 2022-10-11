@@ -4,7 +4,7 @@ const {
 } = require("../utils/asyncCatch");
 const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
-const sendEmail = require("../utils/email");
+const Email = require("../utils/email");
 const crypto = require("crypto");
 
 //! Creating JWT Token For User
@@ -27,6 +27,11 @@ exports.signup = asyncCatch(async (req, res, next) => {
         confirmPassword: req.body.confirmPassword
     });
     const token = signJWT(user._id);
+
+    //!Send Email
+    const url = `${req.protocol}://${req.get("host")}`;
+    const emailHandler = new Email(user, url);
+    await emailHandler.sendWelcome();
 
     res.status(201).json({
         success: true,
@@ -83,14 +88,10 @@ exports.forgetPassword = asyncCatch(async (req, res, next) => {
         validateBeforeSave: false
     });
 
-    const urlString = `${req.protocol}://${req.get("host")}/${resetToken}`;
-
     //! sending email
-    await sendEmail({
-        email: user.email,
-        subject: "Change password!",
-        message: `Please follow the link: ${urlString}`,
-    });
+    const urlString = `${req.protocol}://${req.get("host")}/${resetToken}`;
+    const emailHandler = new Email(user, urlString);
+    await emailHandler.sendResetPassword();
 
     res.status(200).json({
         success: true,
