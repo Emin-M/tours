@@ -8,10 +8,7 @@ const deleteOne = (Model) => asyncCatch(async (req, res, next) => {
     const id = req.params.id;
 
     //! deleting document
-    const deletedDocument = await Model.findByIdAndRemove({
-        _id: id,
-        creator: req.user._id,
-    });
+    const deletedDocument = await Model.findByIdAndRemove(id);
     if (!deletedDocument) return next(new GlobalError("Invalid ID", 404));
 
     res.json({

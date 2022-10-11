@@ -37,4 +37,18 @@ exports.createReview = asyncCatch(async (req, res, next) => {
     });
 });
 
-exports.deleteReview = deleteOne(Review);
+exports.deleteReview = asyncCatch(async (req, res, next) => {
+    const id = req.params.id;
+
+    //! deleting review
+    const deletedReview = await Review.findByIdAndRemove({
+        _id: id,
+        creator: req.user._id,
+    });
+    if (!deletedReview) return next(new GlobalError("Invalid ID", 404));
+
+    res.json({
+        success: true,
+        message: "review deleted"
+    });
+});

@@ -18,8 +18,6 @@ const tourSchema = mongoose.Schema({
   maxGroupSize: {
     type: Number,
     required: [true, "Group size must be defined!"],
-    min: 5,
-    max: 15
   },
 
   difficulty: {
@@ -61,8 +59,6 @@ const tourSchema = mongoose.Schema({
   summary: {
     type: String,
     required: [true, "Summary must be defined!"],
-    minLength: 10,
-    maxLength: 50,
   },
 
   description: {
@@ -75,9 +71,6 @@ const tourSchema = mongoose.Schema({
   },
 
   locations: [{
-    // type: {
-    //   place: String,
-    // }
     place: String,
     coordinates: [Number],
     description: String,
