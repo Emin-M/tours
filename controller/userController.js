@@ -65,3 +65,15 @@ exports.updateUser = asyncCatch(async (req, res, next) => {
 });
 
 exports.getUser = getOne(User);
+
+//! Delete Me 
+exports.deleteMe = asyncCatch(async (req, res, next) => {
+    const me = await User.findById(req.user._id);
+
+    me.delete();
+
+    res.status(200).json({
+        success: true,
+        message: "Document deleted!"
+    });
+});

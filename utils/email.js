@@ -7,7 +7,7 @@ class Email {
         this.email = user.email;
         this.from = process.env.EMAIL_FROM;
         this.url = url;
-    }
+    };
 
     createTransport() {
         if (process.env.NODE_ENV.trim() === "development") {
@@ -28,8 +28,8 @@ class Email {
                     pass: process.env.EMAIL_PASSWORD,
                 },
             });
-        }
-    }
+        };
+    };
 
     async send(template, subject) {
         //1 Grab proper template
@@ -46,15 +46,15 @@ class Email {
         };
         //3 Send email
         await this.createTransport().sendMail(mailOptions);
-    }
+    };
 
     async sendWelcome() {
         await this.send("welcome", "Welcome to out TourApp Family!");
-    }
+    };
 
     async sendResetPassword() {
         await this.send("reset", "Please follow link to reset password");
-    }
-}
+    };
+};
 
 module.exports = Email;

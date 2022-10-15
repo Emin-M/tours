@@ -16,5 +16,6 @@ router.use(protectedAuth);
 router.get("/me", getMe, userController.getUser);
 router.patch("/changePassword", userController.changePassword);
 router.patch("/", userController.updateUser);
+router.delete("/me", userController.deleteMe);
 
 module.exports = router;
