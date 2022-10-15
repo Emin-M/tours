@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const {
     getOne
 } = require("../utils/factory");
+const cloudinary = require("../utils/cloudinary");
 
 //! Creating JWT Token For User
 const signJWT = (id) => {
@@ -71,6 +72,10 @@ exports.deleteMe = asyncCatch(async (req, res, next) => {
     const me = await User.findById(req.user._id);
 
     me.delete();
+
+    if (me.imgId) {
+        await cloudinary.uploader.destroy(me.imgId)
+    };
 
     res.status(200).json({
         success: true,

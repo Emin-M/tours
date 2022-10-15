@@ -6,6 +6,7 @@ const GlobalError = require("../error/GlobalError");
 const jwt = require("jsonwebtoken");
 const Email = require("../utils/email");
 const crypto = require("crypto");
+const cloudinary = require("../utils/cloudinary");
 
 //! Creating JWT Token For User
 const signJWT = (id) => {
@@ -24,8 +25,22 @@ exports.signup = asyncCatch(async (req, res, next) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        confirmPassword: req.body.confirmPassword
+        confirmPassword: req.body.confirmPassword,
     });
+
+    //! loading image to cloud
+    let image;
+    if (req.file) {
+        image = await cloudinary.uploader.upload(req.file.path);
+    };
+
+    await user.update({
+        photo: image.secure_url,
+        imgId: image.public_id,
+    });
+    user.imgId = image.public_id;
+    user.photo = image.secure_url;
+
     const token = signJWT(user._id);
 
     //!Send Email

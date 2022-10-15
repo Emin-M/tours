@@ -5,8 +5,9 @@ const protectedAuth = require("../middleware/protectedAuth");
 const {
     getMe
 } = require("../utils/factory");
+const upload = require("../utils/multer");
 
-router.post("/signup", authContoller.signup);
+router.post("/signup", upload.single("photo"), authContoller.signup);
 router.post("/login", authContoller.login);
 router.post("/forgetPassword", authContoller.forgetPassword);
 router.patch("/resetPassword/:token", authContoller.resetPassword);
