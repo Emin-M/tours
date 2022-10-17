@@ -32,14 +32,13 @@ exports.signup = asyncCatch(async (req, res, next) => {
     let image;
     if (req.file) {
         image = await cloudinary.uploader.upload(req.file.path);
+        await user.update({
+            photo: image.secure_url,
+            imgId: image.public_id,
+        });
+        user.imgId = image.public_id;
+        user.photo = image.secure_url;
     };
-
-    await user.update({
-        photo: image.secure_url,
-        imgId: image.public_id,
-    });
-    user.imgId = image.public_id;
-    user.photo = image.secure_url;
 
     const token = signJWT(user._id);
 

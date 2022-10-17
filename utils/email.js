@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require('sib-api-v3-sdk');
 const pug = require("pug");
 
 class Email {
@@ -10,25 +10,9 @@ class Email {
     };
 
     createTransport() {
-        if (process.env.NODE_ENV.trim() === "development") {
-            return nodemailer.createTransport({
-                host: process.env.EMAIL_HOST,
-                port: process.env.EMAIL_PORT,
-                auth: {
-                    user: process.env.EMAIL_USERNAME,
-                    pass: process.env.EMAIL_PASSWORD,
-                },
-            });
-        } else {
-            return nodemailer.createTransport({
-                host: process.env.EMAIL_HOST,
-                port: process.env.EMAIL_PORT,
-                auth: {
-                    user: process.env.EMAIL_USERNAME,
-                    pass: process.env.EMAIL_PASSWORD,
-                },
-            });
-        };
+        SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey = process.env.SENDINBLUE_API_KEY;
+
+        return new SibApiV3Sdk.TransactionalEmailsApi();
     };
 
     async send(template, subject) {
@@ -37,19 +21,31 @@ class Email {
             name: this.name,
             url: this.url,
         });
+
         //2 Set Options
         const mailOptions = {
-            from: this.from,
-            to: this.email,
-            subject,
-            html,
+            "subject": subject,
+            "sender": {
+                "email": "api@sendinblue.com",
+                "name": "Sendinblue"
+            },
+            "replyTo": {
+                "email": 'api@sendinblue.com',
+                "name": 'Sendinblue'
+            },
+            "to": [{
+                "name": this.name,
+                "email": this.email
+            }],
+            "htmlContent": html,
         };
-        //3 Send email
-        await this.createTransport().sendMail(mailOptions);
+
+        //3 Send Email
+        await this.createTransport().sendTransacEmail(mailOptions);
     };
 
     async sendWelcome() {
-        await this.send("welcome", "Welcome to out TourApp Family!");
+        await this.send("welcome", "Welcome to our TourApp Family!");
     };
 
     async sendResetPassword() {
